@@ -21,82 +21,72 @@
   html, body { height: 100%; }
   body {
     background: var(--bg); color: var(--ink); font-family: var(--text);
-    padding: max(2.5vh, env(safe-area-inset-top)) 3.5vw max(2.5vh, env(safe-area-inset-bottom));
-    display: grid; grid-template-rows: auto 1fr; gap: 2.4vh;
+    --gap: 3vh;
+    padding: max(var(--gap), env(safe-area-inset-top)) var(--gap) max(var(--gap), env(safe-area-inset-bottom));
+    display: grid; grid-template-columns: minmax(0, 1fr) 35%; grid-template-rows: 1fr 1fr; grid-template-areas: "now week" "today week"; gap: var(--gap);
     overflow: hidden;
   }
 
-  .top { display: grid; grid-template-columns: 1fr auto 1fr; gap: 3vw; align-items: center; min-height: 25vh; }
-  .top > :first-child { justify-self: start; }
-  .side { justify-self: end; align-self: center; width: min(100%, 30ch); }
-  .now-temp { font-family: var(--num); font-weight: 800; line-height: .8; font-size: min(21vh, 15vw); letter-spacing: -.01em; }
-  .now-temp sup { font-size: .38em; vertical-align: top; position: relative; top: .1em; font-weight: 500; color: var(--muted); }
-  .now-row { display: flex; align-items: flex-start; gap: 1vw; }
-  .now-icon { width: min(10.5vh, 7.5vw); height: min(10.5vh, 7.5vw); flex: none; margin-top: 1vh; }
-  .now-meta { font-size: min(3.2vh, 2.6vw); color: var(--muted); margin-top: 1.4vh; }
-  .now-meta b { color: var(--ink); font-weight: 600; }
+  /* Left column: now (top half) and today (bottom half). Right column: 7-day, full height. */
+  .panel { background: var(--panel); border-radius: 22px; min-height: 0; }
 
-  .line { font-size: min(2.5vh, 1.9vw); line-height: 1.35; font-weight: 500; text-wrap: pretty; }
-  .line-kind { font-size: min(2.1vh, 1.6vw); font-weight: 600; color: var(--muted); margin-bottom: .8vh; }
-  .line-src { display: block; font-size: .85em; color: var(--muted); font-weight: 400; margin-top: .6vh; }
+  /* Top-left box: two equal halves, each centered both ways */
+  .now { grid-area: now; display: grid; grid-template-columns: 1fr 1px 1fr; align-items: stretch; }
+  .now-divider { background: var(--rule); margin: 4vh 0; }
+  .block { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4.6vh; padding: 2vh 1vw; }
+  .block-label { font-size: min(2.8vh, 1.8vw); font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: .45em; }
+  .live { width: .62em; height: .62em; border-radius: 50%; background: #5DB85C; box-shadow: 0 0 0 .22em rgba(93,184,92,.25); }
+  .big { font-family: var(--num); font-weight: 800; line-height: .8; font-size: min(24vh, 11vw); letter-spacing: -.01em; white-space: nowrap; }
+  .big sup { font-size: .36em; vertical-align: top; position: relative; top: .1em; font-weight: 500; color: var(--muted); margin-left: .04em; }
+  .now-row { display: flex; align-items: center; justify-content: center; gap: .8vw; }
+  .now-icon { width: min(9vh, 5.5vw); height: min(9vh, 5.5vw); flex: none; }
+  .block-sub { font-size: min(3vh, 1.9vw); color: var(--muted); }
+  .block-sub b { color: var(--ink); font-weight: 600; }
 
-  .clock { text-align: center; align-self: center; }
-  .clock .time { white-space: nowrap; font-family: var(--num); font-weight: 800; font-size: min(21vh, 15vw); line-height: .8; letter-spacing: -.01em; }
-  .clock .time sup { font-size: .38em; vertical-align: top; position: relative; top: .1em; font-weight: 500; color: var(--muted); margin-left: .06em; }
-  .clock .date { font-size: min(3.2vh, 2.6vw); color: var(--muted); margin-top: 1.4vh; }
-  .clock .date b { color: var(--ink); font-weight: 600; }
+  /* Bottom-left box: today's low to high, centered */
+  .today { grid-area: today; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4vh; padding: 1vh 2vw 7vh; }
+  .today-head { display: flex; align-items: center; justify-content: center; gap: 1.2vw; font-size: min(5.2vh, 3.2vw); line-height: 1; }
+  .today-head b { font-weight: 700; }
+  .today-head span { color: var(--muted); }
+  .today-rain { color: #8FB8E8; font-weight: 600; font-size: min(3vh, 1.9vw); margin-top: -1.2vh; }
+  .today-icon { width: min(9vh, 5.5vw); height: min(9vh, 5.5vw); flex: none; }
+  .today-temps { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 3vw; width: 100%; }
+  .t-temp { display: flex; flex-direction: column; align-items: center; line-height: .85; }
+  .t-temp:first-child { justify-self: end; }
+  .t-temp:last-child { justify-self: start; }
+  .t-temp span { color: var(--muted); font-size: min(3.2vh, 2vw); font-weight: 600; margin-bottom: 1.2vh; }
+  .t-temp b { font-family: var(--num); font-weight: 800; font-size: min(28vh, 13vw); padding-left: .12em; }
+  .t-arrow { width: min(11vh, 6.5vw); height: auto; }
 
-  .days { display: grid; grid-template-rows: 1fr 1fr; gap: 1.6vw; min-height: 0; }
-  .day { background: var(--panel); border-radius: 18px; padding: 2vh 2.6vw; display: grid; grid-template-columns: 12.5em 1fr auto 1fr; align-items: center; gap: 1.6vw; font-size: min(2.6vh, 2vw); min-height: 0; }
-  .day-name { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto auto; column-gap: .8em; align-items: center; }
-  .day-name b { font-size: 1.7em; font-weight: 700; grid-column: 1; }
-  .day-name span { color: var(--muted); grid-column: 1; }
-  .day-icon { grid-column: 2; grid-row: 1 / 3; width: 3.6em; height: 3.6em; justify-self: start; }
-  .day-name em { grid-column: 1 / -1; font-style: normal; color: #8FB8E8; font-weight: 600; margin-top: .5em; }
-  .day-temp { display: flex; flex-direction: column; align-items: center; line-height: .85; }
-  .day-temp span { color: var(--muted); font-size: 1em; margin-bottom: .5vh; }
-  .day-temp b { font-family: var(--num); font-weight: 800; font-size: min(17vh, 12vw); }
-  .day-arrow { width: min(10vh, 7vw); height: auto; }
-  .status { font-size: .75em; color: var(--muted); text-align: right; margin-top: .6vh; }
-  .status.warn { color: #F0C75E; }
-  .lower { display: grid; grid-template-columns: 1fr minmax(0, 30%); gap: 1.6vw; min-height: 0; }
-  .week { background: var(--panel); border-radius: 18px; padding: 1.6vh 1.6vw; display: flex; flex-direction: column; min-height: 0; }
-  .wk-rows { flex: 1; display: flex; flex-direction: column; justify-content: space-around; margin-top: .8vh; }
-  .wk-row { display: grid; grid-template-columns: 3.4em 2.4em 2.1em 1fr 2.1em; align-items: center; gap: .5vw; font-size: min(2.6vh, 2vw); }
-  .wk-row + .wk-row { border-top: 1px solid var(--rule); padding-top: .4vh; }
+  .week { grid-area: week; padding: 3vh 2vw; display: flex; flex-direction: column; }
+  .week-title { font-size: min(2.8vh, 1.9vw); color: var(--muted); font-weight: 500; text-align: center; line-height: 1; padding-bottom: 1.6vh; }
+  .week-title b { color: var(--ink); font-weight: 600; }
+  .wk-rows { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .wk-row { flex: 1; display: grid; grid-template-columns: 3.3em 2.3em 2em minmax(3em, 1fr) 2em; align-items: center; gap: .7vw; font-size: min(3vh, 1.9vw); line-height: 1; border-top: 1px solid var(--rule); }
   .wk-day { font-weight: 600; }
-  .wk-icon { display: flex; flex-direction: column; align-items: center; line-height: 1; }
-  .wk-icon svg { width: 2.1em; height: 2.1em; }
-  .wk-icon em { font-style: normal; font-size: .62em; color: #8FB8E8; font-weight: 600; margin-top: -.2em; }
+  .wk-icon { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: .15em; }
+  .wk-icon svg { width: 2.2em; height: 2.2em; display: block; }
+  .wk-icon.rain { transform: translateY(-.13em); }
+  .wk-icon em { font-style: normal; font-size: .6em; color: #8FB8E8; font-weight: 600; white-space: nowrap; line-height: 1; }
   .wk-lo, .wk-hi { font-family: var(--num); font-weight: 700; font-size: 1.25em; text-align: right; }
   .wk-lo { color: var(--muted); }
   .wk-bar { position: relative; height: .36em; border-radius: 1em; background: #34415A; }
   .wk-fill { position: absolute; top: 0; bottom: 0; border-radius: 1em; }
   .dot { position: absolute; top: 50%; width: .62em; height: .62em; margin: -.31em 0 0 -.31em; border-radius: 50%; background: #EEF1F5; border: 2px solid var(--panel); }
-  .chart-title { font-size: min(2.6vh, 2vw); color: var(--muted); font-weight: 500; }
-  .chart-title b { color: var(--ink); font-weight: 600; }
-
 
   .msg { grid-row: 1 / -1; align-self: center; justify-self: center; font-size: 3vh; color: var(--muted); text-align: center; max-width: 40ch; line-height: 1.4; }
 
   @media (orientation: portrait) {
-    .top { grid-template-columns: 1fr auto; }
-    .side { grid-column: 1 / -1; justify-self: stretch; width: auto; }
-    .clock { text-align: right; }
-    .lower { grid-template-columns: 1fr; grid-template-rows: 1.3fr 1fr; gap: 1.6vh; }
-    .day { font-size: 2vh; grid-template-columns: 11em 1fr auto 1fr; }
-    .wk-row { font-size: 2.2vh; }
-    .line { font-size: 2.4vh; }
-    .now-temp { font-size: 22vh; }
-    .now-meta, .clock .date { font-size: 2.2vh; }
-    .clock .time { font-size: 16vh; }
+    body { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; grid-template-areas: "now" "today" "week"; }
+    .big, .t-temp b { font-size: 13vh; }
+    .block-sub, .block-label, .today-head { font-size: 2.2vh; }
+    .wk-row { font-size: 2.4vh; }
   }
 </style>
 </head>
 <body>
   <div class="msg" id="loading">Loading forecast…</div>
 
-<script src="lines.js"></script>
 <script>
 /* ---------- Settings: change these if you move the display ---------- */
 const PLACE = "La Mirada";
@@ -113,10 +103,10 @@ const URL_API = "https://api.open-meteo.com/v1/forecast"
   + `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=${encodeURIComponent(TZ)}&forecast_days=7`;
 
 const CODES = {0:"Clear",1:"Mostly clear",2:"Partly cloudy",3:"Cloudy",45:"Fog",48:"Freezing fog",
-  51:"Light drizzle",53:"Drizzle",55:"Heavy drizzle",56:"Freezing drizzle",57:"Freezing drizzle",
-  61:"Light rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",67:"Freezing rain",
+  51:"Light drizzle",53:"Drizzle",55:"Heavy drizzle",56:"Light freezing drizzle",57:"Freezing drizzle",
+  61:"Light rain",63:"Rain",65:"Heavy rain",66:"Light freezing rain",67:"Freezing rain",
   71:"Light snow",73:"Snow",75:"Heavy snow",77:"Snow grains",80:"Light showers",81:"Showers",82:"Heavy showers",
-  85:"Snow showers",86:"Snow showers",95:"Thunderstorms",96:"Thunderstorms with hail",99:"Thunderstorms with hail"};
+  85:"Light snow showers",86:"Heavy snow showers",95:"Thunderstorms",96:"Thunderstorms with hail",99:"Thunderstorms with heavy hail"};
 
 // Temperature to color: cold blue through mild green to hot orange-red
 const STOPS = [[35,"#7A9FE8"],[50,"#86C3E0"],[62,"#9BD3A0"],[72,"#EBCB5E"],[82,"#F0964A"],[95,"#DE5A3C"]];
@@ -139,22 +129,49 @@ function sunG(cx,cy,r){ let rays=""; for(let k=0;k<8;k++){ const a=k*Math.PI/4, 
   return `<g stroke="#F2C14E" stroke-width="3.5" stroke-linecap="round">${rays}</g><circle cx="${cx}" cy="${cy}" r="${r}" fill="#F2C14E"/>`; }
 function moonG(cx,cy,r){ return `<path d="M${cx+r*.35} ${cy-r} A${r} ${r} 0 1 0 ${cx+r} ${cy+r*.45} A${r*.8} ${r*.8} 0 0 1 ${cx+r*.35} ${cy-r}Z" fill="#D9DEE8"/>`; }
 function cloudG(dy=0, fill="#C9D3E0"){ return `<path d="${CLOUD}" transform="translate(0 ${dy})" fill="${fill}"/>`; }
-function iconKind(code){
-  if (code<=1) return "clear"; if (code===2) return "partly"; if (code===3) return "cloudy";
-  if (code===45||code===48) return "fog"; if (code>=51&&code<=57) return "drizzle";
-  if ((code>=61&&code<=67)||(code>=80&&code<=82)) return "rain";
-  if ((code>=71&&code<=77)||code===85||code===86) return "snow"; if (code>=95) return "storm"; return "cloudy";
-}
+// Pieces drawn under the cloud: n marks spread across the icon
+function marks(n, draw, span=24, mid=32){ let out=""; for (let k=0;k<n;k++){ const x = n===1 ? mid : mid-span/2 + k*(span/(n-1)); out+=draw(x,k); } return out; }
+const RAIN="#8FB8E8", HEAVY="#5E97DB", ICE="#CFE6FF";
+function drops(n, color, heavy, span, mid){ return `<g stroke="${color}" stroke-width="${heavy?4.2:3.4}" stroke-linecap="round">${marks(n,(x,k)=>`<line x1="${x+3}" y1="${heavy?42:43}" x2="${x-2}" y2="${heavy?58:54}"/>`, span, mid)}</g>`; }
+function dots(n, color, span, mid){ return `<g fill="${color}">${marks(n,(x,k)=>`<circle cx="${x}" cy="${k%2?52:47}" r="2.4"/>`, span, mid)}</g>`; }
+function flake(x,y,r,color){ let l=""; for (let a=0;a<3;a++){ const t=a*Math.PI/3, dx=Math.cos(t)*r, dy=Math.sin(t)*r; l+=`<line x1="${(x-dx).toFixed(1)}" y1="${(y-dy).toFixed(1)}" x2="${(x+dx).toFixed(1)}" y2="${(y+dy).toFixed(1)}"/>`; } return `<g stroke="${color}" stroke-width="2.4" stroke-linecap="round">${l}</g>`; }
+function flakes(n){ return marks(n,(x,k)=>flake(x, k%2?54:46, n>3?3.8:4.2, "#EEF1F5"), n>3?34:24); }
+function hail(n){ return `<g fill="#EEF1F5">${marks(n,(x,k)=>`<circle cx="${x}" cy="${k%2?55:50}" r="2.6"/>`)}</g>`; }
+function sunOrMoon(isDay, x, y, r){ return isDay ? sunG(x,y,r) : moonG(x,y,r+1); }
+// Cloud with something peeking out behind it (used for "showers": on-and-off rain with breaks)
+function peekCloud(isDay){ return sunOrMoon(isDay,21,15,7) + `<g transform="translate(4 -6) scale(.92)">${cloudG(0)}</g>`; }
+const DARK="#9AA6B8";
+
+// One distinct icon per forecast type (WMO weather codes used by Open-Meteo)
 function iconSVG(code, isDay){
-  const k=iconKind(code); let g="";
-  if (k==="clear") g = isDay ? sunG(32,32,11) : moonG(30,32,14);
-  else if (k==="partly") g = (isDay ? sunG(24,22,8) : moonG(24,22,9)) + `<g transform="translate(6 7) scale(.88)">${cloudG()}</g>`;
-  else if (k==="cloudy") g = cloudG(-3);
-  else if (k==="fog") g = cloudG(-10,"#AEB8C7") + `<g stroke="#C9D3E0" stroke-width="3.5" stroke-linecap="round"><line x1="14" y1="45" x2="50" y2="45"/><line x1="18" y1="53" x2="46" y2="53"/></g>`;
-  else if (k==="drizzle") g = cloudG(-8) + `<g fill="#8FB8E8"><circle cx="24" cy="48" r="2.5"/><circle cx="34" cy="51" r="2.5"/><circle cx="44" cy="48" r="2.5"/></g>`;
-  else if (k==="rain") g = cloudG(-8) + `<g stroke="#8FB8E8" stroke-width="3.5" stroke-linecap="round"><line x1="25" y1="44" x2="21" y2="55"/><line x1="35" y1="44" x2="31" y2="55"/><line x1="45" y1="44" x2="41" y2="55"/></g>`;
-  else if (k==="snow") g = cloudG(-8) + `<g fill="#EEF1F5"><circle cx="23" cy="49" r="3"/><circle cx="33" cy="54" r="3"/><circle cx="43" cy="49" r="3"/></g>`;
-  else g = cloudG(-8,"#AEB8C7") + `<path d="M35 40L27 51H33L29 60L40 47H34L37 40Z" fill="#F2C14E"/>`;
+  let g="";
+  switch (code){
+    case 0: g = isDay ? sunG(32,32,11) : moonG(30,32,14); break;                                   // Clear
+    case 1: g = (isDay ? sunG(28,28,10) : moonG(28,28,12)) + `<g transform="translate(22 26) scale(.55)">${cloudG(0)}</g>`; break; // Mostly clear
+    case 2: g = (isDay ? sunG(24,22,8) : moonG(24,22,9)) + `<g transform="translate(6 7) scale(.88)">${cloudG()}</g>`; break; // Partly cloudy
+    case 3: g = `<g transform="translate(-6 -8) scale(.8)">${cloudG(0,DARK)}</g>` + `<g transform="translate(4 2)">${cloudG(0)}</g>`; break; // Cloudy
+    case 45: case 48: g = cloudG(-10,"#AEB8C7") + `<g stroke="#C9D3E0" stroke-width="3.5" stroke-linecap="round"><line x1="14" y1="45" x2="50" y2="45"/><line x1="18" y1="53" x2="46" y2="53"/></g>`; break; // Fog
+    case 51: g = cloudG(-8) + dots(2, RAIN); break;                       // Light drizzle
+    case 53: g = cloudG(-8) + dots(3, RAIN); break;                       // Drizzle
+    case 55: g = cloudG(-8) + dots(5, RAIN); break;                       // Heavy drizzle
+    case 56: case 57: g = cloudG(-8) + dots(code===56?2:3, ICE, 14, 25) + flake(45,50,4,ICE); break; // Freezing drizzle
+    case 61: g = cloudG(-8) + drops(2, RAIN); break;                      // Light rain
+    case 63: g = cloudG(-8) + drops(3, RAIN); break;                      // Rain
+    case 65: g = cloudG(-10, DARK) + drops(4, HEAVY, true); break;        // Heavy rain
+    case 66: case 67: g = cloudG(-8) + drops(code===66?2:3, ICE, false, 14, 24) + flake(45,50,4,ICE); break; // Freezing rain
+    case 71: g = cloudG(-8) + flakes(2); break;                           // Light snow
+    case 73: g = cloudG(-8) + flakes(3); break;                           // Snow
+    case 75: g = cloudG(-10, DARK) + flakes(4); break;                    // Heavy snow
+    case 77: g = cloudG(-8) + `<g fill="#EEF1F5">${marks(4,(x,k)=>`<circle cx="${x}" cy="${k%2?52:47}" r="1.6"/>`)}</g>`; break; // Snow grains
+    case 80: g = peekCloud(isDay) + drops(2, RAIN); break;                // Light showers
+    case 81: g = peekCloud(isDay) + drops(3, RAIN); break;                // Showers
+    case 82: g = peekCloud(isDay) + drops(4, HEAVY, true); break;         // Heavy showers
+    case 85: g = peekCloud(isDay) + flakes(2); break;                     // Light snow showers
+    case 86: g = peekCloud(isDay) + flakes(4); break;                     // Heavy snow showers
+    case 95: g = cloudG(-10, DARK) + `<path d="M35 38L27 50H33L29 60L41 46H35L38 38Z" fill="#F2C14E"/>`; break; // Thunderstorms
+    case 96: case 99: g = cloudG(-10, DARK) + `<path d="M35 38L27 50H33L29 60L41 46H35L38 38Z" fill="#F2C14E"/>` + `<g fill="#EEF1F5"><circle cx="20" cy="50" r="2.6"/><circle cx="47" cy="52" r="2.6"/>${code===99?`<circle cx="22" cy="58" r="2.6"/><circle cx="45" cy="59" r="2.6"/>`:""}</g>`; break; // Thunderstorms with hail
+    default: g = cloudG(-3);
+  }
   return `<g class="wx">${g}</g>`;
 }
 let data = null, lastOk = null, lastErr = false;
@@ -178,25 +195,32 @@ async function load(){
 
 function weekday(dateStr){ const [y,m,d]=dateStr.split("-").map(Number); return new Date(Date.UTC(y,m-1,d)).toLocaleDateString("en-US",{weekday:"short",timeZone:"UTC"}); }
 
-// Today and tomorrow, big: low to high
-function daysHTML(np, curTemp){
-  const d=data.daily; let i0=d.time.indexOf(np.date); if (i0<0) i0=0;
-  const idx=[i0,i0+1].filter(i=>i<d.time.length);
-  const full=ds=>{ const [y,m,dd]=ds.split("-").map(Number); return new Date(Date.UTC(y,m-1,dd)).toLocaleDateString("en-US",{weekday:"long",timeZone:"UTC"}); };
-  return `<section class="days">${idx.map((i,k)=>{
-    const tLo=d.temperature_2m_min[i], tHi=d.temperature_2m_max[i], p=d.precipitation_probability_max[i] ?? 0;
-    return `<div class="day">
-      <div class="day-name"><b>${k===0?"Today":"Tomorrow"}</b><span>${full(d.time[i])}</span>
-        <svg class="day-icon" viewBox="0 0 64 64" aria-hidden="true">${iconSVG(d.weather_code?d.weather_code[i]:3,1)}</svg>
-        ${p>=20?`<em>${p}% chance of rain</em>`:""}</div>
-      <div class="day-temp"><span>Low</span><b style="color:${tempColor(tLo)}">${Math.round(tLo)}°</b></div>
-      <svg class="day-arrow" viewBox="0 0 120 40" aria-hidden="true"><defs><linearGradient id="ag${k}" x1="0" x2="1"><stop offset="0" stop-color="${tempColor(tLo)}"/><stop offset="1" stop-color="${tempColor(tHi)}"/></linearGradient></defs><path d="M6 20H104M88 6L106 20L88 34" fill="none" stroke="url(#ag${k})" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div class="day-temp"><span>High</span><b style="color:${tempColor(tHi)}">${Math.round(tHi)}°</b></div>
-    </div>`; }).join("")}</section>`;
+// Line under "Today": the kind of wet weather expected, with its chance
+function todayLine(code, p){
+  const wet = code>=51 && code!==77;
+  if (wet) return `<div class="today-rain">${CODES[code]||"Rain"}${p>0?`, ${p}% chance`:""}</div>`;
+  if (p>=20) return `<div class="today-rain">${p}% chance of rain</div>`;
+  return "";
+}
+
+// Today, big: low to high
+function todayHTML(np){
+  const d=data.daily; let i=d.time.indexOf(np.date); if (i<0) i=0;
+  const tLo=d.temperature_2m_min[i], tHi=d.temperature_2m_max[i], p=d.precipitation_probability_max[i] ?? 0, code=d.weather_code?d.weather_code[i]:3;
+  const [y,m,dd]=d.time[i].split("-").map(Number);
+  const wd=new Date(Date.UTC(y,m-1,dd)).toLocaleDateString("en-US",{weekday:"long",timeZone:"UTC"});
+  return `<section class="today panel">
+    <div class="today-head"><svg class="today-icon" viewBox="0 0 64 64" aria-hidden="true">${iconSVG(d.weather_code?d.weather_code[i]:3,1)}</svg><b>Today</b></div>
+    ${todayLine(code, p)}
+    <div class="today-temps">
+      <div class="t-temp"><span>Low</span><b style="color:${tempColor(tLo)}">${Math.round(tLo)}°</b></div>
+      <svg class="t-arrow" viewBox="0 0 120 40" aria-hidden="true"><defs><linearGradient id="ag" x1="0" x2="1"><stop offset="0" stop-color="${tempColor(tLo)}"/><stop offset="1" stop-color="${tempColor(tHi)}"/></linearGradient></defs><path d="M6 20H104M88 6L106 20L88 34" fill="none" stroke="url(#ag)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="t-temp"><span>High</span><b style="color:${tempColor(tHi)}">${Math.round(tHi)}°</b></div>
+    </div>
+  </section>`;
 }
 
 // 7-day list, styled like a phone weather app: day, icon, rain chance, low, range bar, high
-function lastAge(){ return lastOk ? Math.round((Date.now()-lastOk)/60000) : 0; }
 function weekHTML(np, curTemp){
   const d=data.daily, n=Math.min(7,d.time.length);
   const lows=d.temperature_2m_min.slice(0,n), highs=d.temperature_2m_max.slice(0,n);
@@ -209,39 +233,13 @@ function weekHTML(np, curTemp){
     const dot = i===0 && d.time[0]===np.date ? `<i class="dot" style="left:${Math.min(100,Math.max(0,(curTemp-wMin)/span*100))}%"></i>` : "";
     rows+=`<div class="wk-row">
       <span class="wk-day">${i===0 && d.time[0]===np.date ? "Today" : weekday(d.time[i])}</span>
-      <span class="wk-icon"><svg viewBox="0 0 64 64" aria-hidden="true">${iconSVG(d.weather_code ? d.weather_code[i] : 3, 1)}</svg>${p>=20?`<em>${p}%</em>`:""}</span>
+      <span class="wk-icon${p>=20?" rain":""}"><svg viewBox="0 0 64 64" aria-hidden="true">${iconSVG(d.weather_code ? d.weather_code[i] : 3, 1)}</svg>${p>=20?`<em>${p}%</em>`:""}</span>
       <span class="wk-lo">${Math.round(lo)}°</span>
       <span class="wk-bar"><span class="wk-fill" style="left:${left}%;width:${width}%;background:${grad}"></span>${dot}</span>
       <span class="wk-hi">${Math.round(hi)}°</span>
     </div>`;
   }
-  return `<section class="week"><div class="chart-title"><b>7-day</b> forecast</div><div class="wk-rows">${rows}</div><div class="status ${lastErr?"warn":""}">${PLACE}, ${lastErr ? `couldn't refresh; data from ${lastAge()} min ago` : `updated ${lastAge()===0?"just now":lastAge()+" min ago"}`}</div></section>`;
-}
-
-// Shuffle a list the same way every time (fixed seed), so the order is mixed but stable.
-function stableShuffle(list, seed){
-  const out=list.slice(); let t=seed>>>0;
-  const rnd=()=>{ t+=0x6D2B79F5; let r=Math.imul(t^(t>>>15),1|t); r^=r+Math.imul(r^(r>>>7),61|r); return ((r^(r>>>14))>>>0)/4294967296; };
-  for (let i=out.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [out[i],out[j]]=[out[j],out[i]]; }
-  return out;
-}
-let LINES=null;
-function lines(){
-  if (LINES) return LINES;
-  const Q=window.DAILY_QUOTES||[], G=stableShuffle(window.DAILY_JOKES||[],2), K=stableShuffle(window.DAILY_JOKES_KOREAN||[],3);
-  const jokes=[]; for (let i=0;i<Math.max(G.length,K.length);i++){ if (G[i]) jokes.push(G[i]); if (K[i]) jokes.push(K[i]); }
-  LINES={quotes:stableShuffle(Q,1), jokes};
-  return LINES;
-}
-function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-function dailyLine(dateStr){
-  const {quotes, jokes}=lines();
-  const [y,m,d]=dateStr.split("-").map(Number);
-  const day=Math.floor(Date.UTC(y,m-1,d)/86400000), slot=Math.floor(day/2);
-  if (day%2===0 && quotes.length){ const [q,src]=quotes[slot%quotes.length];
-    return `<p class="line-kind">Inspiration of the Day</p><p class="line quote">\u201C${esc(q)}\u201D <span class="line-src">${esc(src)}</span></p>`; }
-  if (jokes.length) return `<p class="line-kind">Joke of the Day</p><p class="line">${esc(jokes[slot%jokes.length])}</p>`;
-  return "";
+  return `<section class="week panel"><div class="week-title"><b>7-day</b> forecast</div><div class="wk-rows">${rows}</div></section>`;
 }
 
 function render(){
@@ -256,19 +254,38 @@ function render(){
   const md = new Intl.DateTimeFormat("en-US",{timeZone:TZ,month:"long",day:"numeric"}).format(new Date());
 
   document.body.innerHTML = `
-    <section class="top">
-      <div>
-        <div class="now-row"><div class="now-temp" style="color:${tempColor(c.temperature_2m)}">${Math.round(c.temperature_2m)}<sup>°F</sup></div><svg class="now-icon" viewBox="0 0 64 64" aria-hidden="true">${iconSVG(c.weather_code, c.is_day)}</svg></div>
-        <div class="now-meta"><b>${CODES[c.weather_code]||"—"}</b>, feels like ${Math.round(c.apparent_temperature)}°</div>
+    <section class="now panel">
+      <div class="block">
+        <div class="block-label"><i class="live"></i>Right now</div>
+        <div class="now-row"><div class="big" style="color:${tempColor(c.temperature_2m)}">${Math.round(c.temperature_2m)}<sup>°F</sup></div><svg class="now-icon" viewBox="0 0 64 64" aria-hidden="true">${iconSVG(c.weather_code, c.is_day)}</svg></div>
+        <div class="block-sub"><b>${CODES[c.weather_code]||"—"}</b>, feels like ${Math.round(c.apparent_temperature)}°</div>
       </div>
-      <div class="clock"><div class="time">${timeHTML}</div><div class="date"><b>${wd}</b>, ${md}</div></div>
-      <div class="side">${dailyLine(np.date)}</div>
+      <div class="now-divider"></div>
+      <div class="block">
+        <div class="block-label">${wd}</div>
+        <div class="big">${timeHTML}</div>
+        <div class="block-sub">${md}</div>
+      </div>
     </section>
-    <section class="lower">
-      ${daysHTML(np, c.temperature_2m)}
-      ${weekHTML(np, c.temperature_2m)}
-    </section>`;
+    ${todayHTML(np)}
+    ${weekHTML(np, c.temperature_2m)}`;
   centerIcons();
+  alignTodayHead();
+}
+
+// Line up the visible middle of the "Today" icon + word with the visible middle of the arrow
+function alignTodayHead(){
+  try {
+    const head=document.querySelector(".today-head"), arrow=document.querySelector(".t-arrow");
+    const icon=head.querySelector(".today-icon"), g=icon.querySelector("g.wx"), word=head.querySelector("b");
+    head.style.transform="";
+    const ar=arrow.getBoundingClientRect(), ab=arrow.querySelector("path").getBBox();
+    const arrowMid=ar.left+(ab.x+ab.width/2)*(ar.width/120);
+    const ir=icon.getBoundingClientRect(), ib=g.getBBox(), k=ir.width/64;
+    const iconLeft=ir.left+(32-ib.width/2-1.75)*k;
+    const rg=document.createRange(); rg.selectNodeContents(word); const wordRight=rg.getBoundingClientRect().right;
+    head.style.transform=`translateX(${(arrowMid-(iconLeft+wordRight)/2).toFixed(1)}px)`;
+  } catch(e) {}
 }
 
 function centerIcons(){

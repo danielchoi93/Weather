@@ -23,9 +23,8 @@
     background: var(--bg); color: var(--ink); font-family: var(--text);
     padding: max(2.5vh, env(safe-area-inset-top)) 3.5vw max(2.5vh, env(safe-area-inset-bottom));
     display: grid; grid-template-rows: auto 1fr; gap: 2.4vh;
-    overflow: hidden; transition: opacity 1.5s;
+    overflow: hidden;
   }
-  body.dim { opacity: .35; }
 
   .top { display: grid; grid-template-columns: 1fr auto 1fr; gap: 3vw; align-items: center; min-height: 25vh; }
   .top > :first-child { justify-self: start; }
@@ -86,7 +85,6 @@
     .now-meta, .clock .date { font-size: 2.2vh; }
     .clock .time { font-size: 16vh; }
   }
-  @media (prefers-reduced-motion: reduce) { body { transition: none; } }
 </style>
 </head>
 <body>
@@ -98,7 +96,6 @@
 const PLACE = "La Mirada";
 const LAT = 33.9172, LON = -118.0120;
 const TZ = "America/Los_Angeles";
-const DIM_FROM = 22, DIM_UNTIL = 6;     // screen dims between these hours (24h)
 const CHART_HOURS = 24;                 // the chart shows this many hours ahead of now
 const REFRESH_MIN = 5;                  // minutes between forecast checks
 
@@ -229,7 +226,7 @@ function chartSVG(hours, np){
     <defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="${Y(hi)}" x2="0" y2="${Y(lo)}">${stops.join("")}</linearGradient></defs>
     ${rainBands(hours).map(r=>`<rect x="${X(r.a)-step/2}" y="${top-40}" width="${(r.b-r.a+1)*step}" height="${bottom-top+40}" fill="#5B9CF0" opacity="${(0.12+r.p/100*0.38).toFixed(3)}"/><rect x="${X(r.a)-step/2}" y="${top-40}" width="${(r.b-r.a+1)*step}" height="4" fill="#7DB2F5" opacity="${(0.35+r.p/100*0.65).toFixed(3)}"/>`).join("")}`;
   // midnight divider with the next day's name
-  hours.forEach((x,i)=>{ if (i>0 && x.h===0){
+  hours.forEach((x,i)=>{ if (i>=2 && x.h===0){
     s+=`<line x1="${X(i)}" x2="${X(i)}" y1="${top-44}" y2="${bottom}" stroke="#93A0B4" stroke-width="1.5" opacity=".35"/>`;
   }});
   s+=`<path d="${area}" fill="url(#g)" opacity=".16"/>
@@ -318,7 +315,6 @@ function dailyLine(dateStr){
 
 function render(){
   const np = nowParts();
-  document.body.classList.toggle("dim", np.hour>=DIM_FROM || np.hour<DIM_UNTIL);
   if (!data){ document.body.innerHTML=`<div class="msg">Can't reach the forecast service. Check the tablet's Wi-Fi; it will retry every ${REFRESH_MIN} minutes.</div>`; return; }
 
   const c=data.current;
